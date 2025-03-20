@@ -1,103 +1,133 @@
-import Image from "next/image";
+"use client";
+
+// pages/index.tsx
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import OrderCard from '../components/OrderCard';
+import TabNavigation from '../components/TabNavigation';
+
+interface Order {
+  id: string;
+  placedTime: string;
+  items: { name: string; quantity: number; alert?: boolean }[];
+  prepTime: number;
+  price: number;
+  isDineIn: boolean;
+}
 
 export default function Home() {
+  const [activeTab, setActiveTab] = useState('New');
+  
+  const tabs = [
+    { name: 'New', count: 4 },
+    { name: 'Cooking', count: 4 },
+    { name: 'Ready', count: 4 },
+  ];
+  
+  const orders: Order[] = [
+    {
+      id: '777783',
+      placedTime: '5/11/23 at 7:30 PM',
+      items: [
+        { name: 'Margherita Pizza', quantity: 1, alert: true },
+        { name: 'Garlic Bread', quantity: 1, alert: true },
+      ],
+      prepTime: 20,
+      price: 200,
+      isDineIn: true,
+    },
+    {
+      id: '777786',
+      placedTime: '5/11/23 at 8:15 PM',
+      items: [
+        { name: 'Masala Dosa', quantity: 1, alert: true },
+        { name: 'Cold Coffee', quantity: 1, alert: true },
+      ],
+      prepTime: 18,
+      price: 150,
+      isDineIn: true,
+    },
+  ];
+  
+  const handleStart = (orderId: string) => {
+    console.log(`Starting order ${orderId}`);
+  };
+  
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="max-w-md mx-auto bg-gray-50 min-h-screen">
+      <div className="p-4 flex items-center justify-between">
+        <div className="flex items-center">
+          <button className="mr-2">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <h1 className="text-xl font-bold">Live Orders <span className="inline-block w-2 h-2 bg-green-500 rounded-full ml-1"></span></h1>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+        <button className="p-2">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          </svg>
+        </button>
+      </div>
+      
+      <div className="px-4 py-2">
+        <div className="relative">
+          <input 
+            type="text" 
+            placeholder="Search by Order No" 
+            className="w-full p-2 pl-10 pr-10 border rounded-md bg-white"
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
+          <svg className="absolute left-3 top-3 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <button className="absolute right-2 top-2">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+          </button>
+        </div>
+      </div>
+      
+      <div className="mt-4">
+        <TabNavigation 
+          tabs={tabs} 
+          activeTab={activeTab} 
+          onTabChange={setActiveTab} 
+        />
+      </div>
+      
+      <motion.div 
+        className="p-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ staggerChildren: 0.1 }}
+      >
+        {orders.map((order) => (
+          <OrderCard
+            key={order.id}
+            orderNumber={order.id}
+            placedTime={order.placedTime}
+            items={order.items}
+            prepTime={order.prepTime}
+            price={order.price}
+            isDineIn={order.isDineIn}
+            onStart={() => handleStart(order.id)}
           />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+        ))}
+      </motion.div>
+      
+      <div className="fixed bottom-4 right-4">
+        <motion.button 
+          className="bg-gray-200 p-3 rounded-full shadow-lg"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
         >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </motion.button>
+      </div>
     </div>
   );
 }
