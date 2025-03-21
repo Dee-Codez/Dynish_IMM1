@@ -56,6 +56,102 @@ export default function Home() {
       orderType: 'Takeaway',
       status: 'New'
     },
+    {
+      id: '777789',
+      placedTime: '5/11/23 at 8:45 PM',
+      items: [
+        { name: 'Paneer Butter Masala', quantity: 1, alert: false },
+        { name: 'Butter Naan', quantity: 2, alert: false },
+      ],
+      prepTime: 25,
+      price: 300,
+      orderType: 'Delivery',
+      status: 'Cooking'
+    },
+    {
+      id: '777792',
+      placedTime: '5/11/23 at 9:00 PM',
+      items: [
+        { name: 'Chicken Biryani', quantity: 1, alert: true },
+        { name: 'Raita', quantity: 1, alert: false },
+      ],
+      prepTime: 30,
+      price: 250,
+      orderType: 'Dine-in',
+      status: 'Cooking'
+    },
+    {
+      id: '777795',
+      placedTime: '5/11/23 at 9:30 PM',
+      items: [
+        { name: 'Veg Manchurian', quantity: 1, alert: false },
+        { name: 'Fried Rice', quantity: 1, alert: false },
+      ],
+      prepTime: 20,
+      price: 180,
+      orderType: 'Takeaway',
+      status: 'Ready'
+    },
+    {
+      id: '777798',
+      placedTime: '5/11/23 at 9:45 PM',
+      items: [
+        { name: 'Pasta Alfredo', quantity: 1, alert: false },
+        { name: 'Garlic Bread', quantity: 1, alert: false },
+      ],
+      prepTime: 15,
+      price: 220,
+      orderType: 'Dine-in',
+      status: 'Ready'
+    },
+    {
+      id: '777801',
+      placedTime: '5/11/23 at 10:00 PM',
+      items: [
+        { name: 'Tandoori Chicken', quantity: 1, alert: true },
+        { name: 'Butter Naan', quantity: 2, alert: false },
+      ],
+      prepTime: 35,
+      price: 400,
+      orderType: 'Delivery',
+      status: 'New'
+    },
+    {
+      id: '777804',
+      placedTime: '5/11/23 at 10:15 PM',
+      items: [
+        { name: 'Paneer Tikka', quantity: 1, alert: false },
+        { name: 'Mint Chutney', quantity: 1, alert: false },
+      ],
+      prepTime: 20,
+      price: 280,
+      orderType: 'Dine-in',
+      status: 'Cooking'
+    },
+    {
+      id: '777807',
+      placedTime: '5/11/23 at 10:30 PM',
+      items: [
+        { name: 'Hakka Noodles', quantity: 1, alert: false },
+        { name: 'Spring Rolls', quantity: 1, alert: false },
+      ],
+      prepTime: 25,
+      price: 200,
+      orderType: 'Takeaway',
+      status: 'Ready'
+    },
+    {
+      id: '777810',
+      placedTime: '5/11/23 at 10:45 PM',
+      items: [
+        { name: 'Cheeseburger', quantity: 1, alert: true },
+        { name: 'French Fries', quantity: 1, alert: true },
+      ],
+      prepTime: 15,
+      price: 180,
+      orderType: 'Delivery',
+      status: 'New'
+    },
   ]);
   
   // Filter orders based on active tab
@@ -95,29 +191,27 @@ export default function Home() {
   
   // Handle order status update
   const handleAction = (orderId: string) => {
-    setOrders(prevOrders => {
-      const updatedOrders = prevOrders.map(order => {
+    setOrders((prevOrders) => {
+      const updatedOrders = prevOrders.map((order) => {
         if (order.id === orderId) {
-          if (order.status === 'New') return { ...order, status: 'Cooking' };
-          if (order.status === 'Cooking') return { ...order, status: 'Ready' };
-          if (order.status === 'Ready') return { ...order, status: 'Completed' };
+          if (order.status === "New") return { ...order, status: "Cooking" as OrderStatus };
+          if (order.status === "Cooking") return { ...order, status: "Ready" as OrderStatus };
+          if (order.status === "Ready") return { ...order, status: "Completed" as OrderStatus };
         }
         return order;
       });
-      
-      // Find the updated order to determine which tab to switch to
-      const updatedOrder = updatedOrders.find(order => order.id === orderId);
-      if (updatedOrder && updatedOrder.status !== 'Completed') {
-        // Switch to the tab matching the new status
+        const updatedOrder = updatedOrders.find((order) => order.id === orderId);
+      if (updatedOrder && updatedOrder.status !== "Completed") {
         setTimeout(() => {
-          setActiveTab(updatedOrder.status as 'New' | 'Cooking' | 'Ready');
+          setActiveTab(updatedOrder.status as "New" | "Cooking" | "Ready");
           setSwipeDirection(1); // Animation direction
         }, 100);
       }
-      
+  
       return updatedOrders;
     });
   };
+  
   
   // Use the custom swipe hook
   const swipeHandlers = useSwipe({

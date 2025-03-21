@@ -93,7 +93,15 @@ const OrderCard: FC<OrderCardProps> = ({
             )}
         </div>
         <motion.button
-            className="w-1/3 bg-blue-500 text-white py-2 rounded-md flex items-center justify-center"
+            className={`w-1/3 text-white py-2 rounded-md flex items-center justify-center ${
+                buttonText === "Start"
+                    ? "bg-blue-500"
+                    : buttonText === "Ready"
+                    ? "bg-yellow-500"
+                    : buttonText === "Complete"
+                    ? "bg-green-500"
+                    : "bg-gray-500"
+                }`}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={(e) => {
