@@ -35,38 +35,6 @@ export const useSwipe = ({ onSwipeLeft, onSwipeRight, threshold = 50 }: SwipePro
       onSwipeRight();
     }
     
-    // Reset touch values after processing
-    setTouchStart(null);
-    setTouchEnd(null);
-  };
-
-  // Add mouse support for desktop testing
-  const onMouseDown = (e: React.MouseEvent) => {
-    setTouchEnd(null);
-    setTouchStart(e.clientX);
-  };
-
-  const onMouseMove = (e: React.MouseEvent) => {
-    if (touchStart === null) return;
-    setTouchEnd(e.clientX);
-  };
-
-  const onMouseUp = () => {
-    if (!touchStart || !touchEnd) return;
-    
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > threshold;
-    const isRightSwipe = distance < -threshold;
-    
-    if (isLeftSwipe && onSwipeLeft) {
-      onSwipeLeft();
-    }
-    
-    if (isRightSwipe && onSwipeRight) {
-      onSwipeRight();
-    }
-    
-    // Reset values
     setTouchStart(null);
     setTouchEnd(null);
   };
@@ -74,9 +42,6 @@ export const useSwipe = ({ onSwipeLeft, onSwipeRight, threshold = 50 }: SwipePro
   return {
     onTouchStart,
     onTouchMove,
-    onTouchEnd,
-    onMouseDown,
-    onMouseMove,
-    onMouseUp
+    onTouchEnd
   };
 };
