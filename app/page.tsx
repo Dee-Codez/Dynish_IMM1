@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import OrderCard from '../components/OrderCard';
 import TabNavigation from '../components/TabNavigation';
+import { useSwipe } from '@/hooks/useSwipe';
 
 interface OrderItem {
   name: string;
@@ -27,7 +28,6 @@ export default function Home() {
   const [swipeDirection, setSwipeDirection] = useState<number>(0);
   const [isDragging, setIsDragging] = useState(false);
   
-  // Use state to manage orders
   const [orders, setOrders] = useState<Order[]>([
     {
       id: '777783',
@@ -52,6 +52,54 @@ export default function Home() {
       price: 150,
       isDineIn: true,
       status: 'New'
+    },
+    {
+      id: '777789',
+      placedTime: '5/11/23 at 8:45 PM',
+      items: [
+        { name: 'Paneer Butter Masala', quantity: 1, alert: false },
+        { name: 'Butter Naan', quantity: 2, alert: false },
+      ],
+      prepTime: 25,
+      price: 300,
+      isDineIn: false,
+      status: 'Cooking'
+    },
+    {
+      id: '777792',
+      placedTime: '5/11/23 at 9:00 PM',
+      items: [
+        { name: 'Chicken Biryani', quantity: 1, alert: true },
+        { name: 'Raita', quantity: 1, alert: false },
+      ],
+      prepTime: 30,
+      price: 250,
+      isDineIn: true,
+      status: 'Cooking'
+    },
+    {
+      id: '777795',
+      placedTime: '5/11/23 at 9:30 PM',
+      items: [
+        { name: 'Veg Manchurian', quantity: 1, alert: false },
+        { name: 'Fried Rice', quantity: 1, alert: false },
+      ],
+      prepTime: 20,
+      price: 180,
+      isDineIn: false,
+      status: 'Ready'
+    },
+    {
+      id: '777798',
+      placedTime: '5/11/23 at 9:45 PM',
+      items: [
+        { name: 'Pasta Alfredo', quantity: 1, alert: false },
+        { name: 'Garlic Bread', quantity: 1, alert: false },
+      ],
+      prepTime: 15,
+      price: 220,
+      isDineIn: true,
+      status: 'Ready'
     },
   ]);
   
@@ -82,24 +130,35 @@ export default function Home() {
     setActiveTab(tab as 'New' | 'Cooking' | 'Ready');
   };
   
-  // Handle order status update
   const handleAction = (orderId: string) => {
     if (isDragging) return; // Prevent action during drag
     
-    setOrders(prevOrders => 
-      prevOrders.map(order => {
+    setOrders(prevOrders => {
+      const updatedOrders = prevOrders.map(order => {
         if (order.id === orderId) {
           if (order.status === 'New') return { ...order, status: 'Cooking' };
           if (order.status === 'Cooking') return { ...order, status: 'Ready' };
           if (order.status === 'Ready') {
-            // Remove completed orders or change status as needed
             return { ...order, status: 'Completed' };
           }
         }
         return order;
-      })
-    );
+      });
+      
+      // Find the updated order to determine which tab to switch to
+      const updatedOrder = updatedOrders.find(order => order.id === orderId);
+      if (updatedOrder && updatedOrder.status !== 'Completed') {
+        // Switch to the tab matching the new status
+        setTimeout(() => {
+          setActiveTab(updatedOrder.status);
+          setSwipeDirection(1); // Animation direction
+        }, 100);
+      }
+      
+      return updatedOrders;
+    });
   };
+  
   
   // Get button text based on tab
   const getButtonText = (tabName: string) => {
@@ -130,10 +189,25 @@ export default function Home() {
     // Reset dragging state
     setIsDragging(false);
   };
+
+  const swipeHandlers = useSwipe({
+    onSwipeLeft: () => {
+      const nextIndex = currentTabIndex + 1;
+      if (nextIndex < tabs.length) {
+        handleTabChange(tabs[nextIndex].name, 1);
+      }
+    },
+    onSwipeRight: () => {
+      const prevIndex = currentTabIndex - 1;
+      if (prevIndex >= 0) {
+        handleTabChange(tabs[prevIndex].name, -1);
+      }
+    },
+    threshold: 50
+  });
   
   return (
-    <div className="max-w-md mx-auto bg-gray-50 min-h-screen overflow-hidden">
-      {/* Header */}
+    <div className="max-w-md mx-auto text-black bg-gray-50 min-h-screen overflow-hidden">
       <div className="p-4 flex items-center justify-between">
         <div className="flex items-center">
           <button className="mr-2">
@@ -141,7 +215,7 @@ export default function Home() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <h1 className="text-xl font-bold">Live Orders <span className="inline-block w-2 h-2 bg-green-500 rounded-full ml-1"></span></h1>
+          <h1 className="text-xl font-bold">Live Orders <span className="inline-block w-2 h-2 bg-green-500 rounded-full ml-1 animate-ping"></span></h1>
         </div>
         <button className="p-2">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -150,7 +224,6 @@ export default function Home() {
         </button>
       </div>
       
-      {/* Search Bar */}
       <div className="px-4 pb-2 flex items-center">
         <div className="relative flex-1">
           <input 
@@ -172,15 +245,17 @@ export default function Home() {
         </div>
       </div>
       
-      {/* Tab Navigation */}
       <TabNavigation 
         tabs={tabs} 
         activeTab={activeTab} 
         onTabChange={(tab) => handleTabChange(tab, tab === activeTab ? 0 : 
           tabs.findIndex(t => t.name === tab) > currentTabIndex ? 1 : -1)} 
       />
-      
-      {/* Swipeable Content Area - Fixed to prevent overflow */}
+      <div 
+        className="relative overflow-hidden"
+        {...swipeHandlers}
+        style={{ touchAction: 'pan-y' }}
+      >
       <div className="relative overflow-hidden">
         <motion.div 
           className="touch-pan-y"
@@ -226,6 +301,7 @@ export default function Home() {
             </motion.div>
           </AnimatePresence>
         </motion.div>
+      </div>
       </div>
     </div>
   );

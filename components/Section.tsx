@@ -8,7 +8,6 @@ interface SectionProps {
 }
 
 const Section: React.FC<SectionProps> = ({ items, sectionName, moveItem }) => {
-  // Define the next section mapping
   const nextSection: Record<'new' | 'cooking' | 'ready', 'new' | 'cooking' | 'ready' | null> = {
     new: 'cooking',
     cooking: 'ready',
